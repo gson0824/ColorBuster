@@ -82,9 +82,6 @@ class MainFragment : Fragment() {
             override fun onClick(view: View) {
                 val actionEval = MainFragmentDirections.actionMainFragmentToDetailFragment(phrase.name, phrase.hexString)
                 Navigation.findNavController(view).navigate(actionEval)
-
-
-//                view.findNavController().navigate(R.id.action_mainFragment_to_detailFragment)
             }
 
             fun bind(phrase: Phrase) {

@@ -1,5 +1,6 @@
 package com.gson.colorbuster.ui.main
 
+import android.graphics.Color.parseColor
 import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat.Token.fromBundle
 import androidx.fragment.app.Fragment
@@ -31,9 +32,21 @@ class DetailFragment : Fragment() {
     private lateinit var hex: TextView
     private lateinit var backButton: Button
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_detail, container, false)
+
+        color = view.findViewById(R.id.color_text)
+        hex = view.findViewById(R.id.hex_text)
+
+
+        arguments?.let { args ->
+            val safeArgs = DetailFragmentArgs.fromBundle(args)
+            color.text = safeArgs.colorName
+            hex.text = safeArgs.hexNumber
+            view.setBackgroundColor(parseColor(safeArgs.hexNumber))
+        }
+
 
         backButton = view.findViewById(R.id.backButton)
         backButton.setOnClickListener {
