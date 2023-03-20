@@ -13,6 +13,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gson.colorbuster.R
@@ -23,15 +29,12 @@ class MainFragment : Fragment() {
 
     private lateinit var recycler: RecyclerView
     private lateinit var viewModel: MainViewModel
-    private lateinit var definitionTextView: TextView
     private lateinit var prefs: SharedPreferences
 
     companion object {
         fun newInstance() = MainFragment()
         const val POSITION = "adapter_position"
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +53,7 @@ class MainFragment : Fragment() {
                     POSITION,
                     0
                 )
-            )?.itemView?.performClick()
+            )
         }, 500L)
 
         return view
@@ -66,25 +69,30 @@ class MainFragment : Fragment() {
 
     private inner class ColorViewHolder(view: View) : RecyclerView.ViewHolder(view),
         View.OnClickListener {
-        private lateinit var phrase: Phrase
-        private val wordTextView: TextView = itemView.findViewById(R.id.term_textView)
-        private val cardView: CardView = itemView.findViewById(R.id.cardView)
+            private lateinit var phrase: Phrase
+            private val wordTextView: TextView = itemView.findViewById(R.id.term_textView)
+            private val cardView: CardView = itemView.findViewById(R.id.cardView)
 
-        init {
-            itemView.setOnClickListener(this)
-        }
+            init {
+                itemView.setOnClickListener {
+                    onClick(view)
+                }
+            }
 
-        override fun onClick(p0: View?) {
-            definitionTextView.text = phrase.name
-            prefs.edit().putInt(POSITION, adapterPosition).apply()
-        }
+            override fun onClick(view: View) {
+                val actionEval = MainFragmentDirections.actionMainFragmentToDetailFragment(phrase.name, phrase.hexString)
+                Navigation.findNavController(view).navigate(actionEval)
 
-        fun bind(phrase: Phrase) {
-            this.phrase = phrase
-            wordTextView.text = phrase.name
-            cardView.setCardBackgroundColor(parseColor(phrase.hexString))
+
+//                view.findNavController().navigate(R.id.action_mainFragment_to_detailFragment)
+            }
+
+            fun bind(phrase: Phrase) {
+                this.phrase = phrase
+                wordTextView.text = phrase.name
+                cardView.setCardBackgroundColor(parseColor(phrase.hexString))
+            }
         }
-    }
 
     private inner class ColorAdapter(private val list: List<Phrase>) :
         RecyclerView.Adapter<ColorViewHolder>() {
